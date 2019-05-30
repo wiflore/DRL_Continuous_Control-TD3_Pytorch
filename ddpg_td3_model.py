@@ -13,14 +13,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e6)  # replay buffer size
-BATCH_SIZE = 256        # minibatch size
+BATCH_SIZE = 128        # minibatch size
 GAMMA = 0.995           # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR_ACTOR = 0.1e-3       # learning rate of the actor 
 LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 1e-6     # L2 weight decay
 
-
+torch.cuda.empty_cache()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Agent():
@@ -59,25 +59,14 @@ class Agent():
     def save_experience(self, state, action, reward, next_state, done):                               
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward
-        self.memory.add(state, action, reward, next_state, done)
-        # Learn, if enough samples are available in memory
-#         if len(self.memory) > BATCH_SIZE:
-#             experiences = self.memory.sample()
-#             self.learn(experiences, GAMMA)               
+        self.memory.add(state, action, reward, next_state, done)      
                 
                           
-    def multi_step(self, t):
-        # Learn, if enough samples are available in memory
-        if len(self.memory) > BATCH_SIZE:
-            #print(len(memory))
-            if t % 20 == 0:
-                    for i in range(0,10):
-                        self.learn(self.memory.sample(), GAMMA)
-            else:
-#                   self.learn(self.memory.sample(), GAMMA)
-                pass
-                
-                
+    def multi_step(self, states, actions, rewards, next_states, dones):
+        """Save experience in replay memory, and use random sample from buffer to learn."""
+        # Save experience / reward
+        for state, action, reward, next_state, done in zip(states, actions, rewards, next_states, dones):
+            self.memory.add(state, action, reward, next_state, done)
 
 
     def act(self, state, add_noise=True):
@@ -94,6 +83,14 @@ class Agent():
 
     def reset(self):
         self.noise.reset()
+                                                           
+    def multi_learning(self, t, learn_every, n_experiences):
+        if t % learn_every == 0:
+            for i in range(n_experiences): #n times to update the network
+                if len(self.memory) > BATCH_SIZE:
+                    experiences = self.memory.sample()
+                    self.learn(experiences, GAMMA)
+                                                                                                                                                                       
 
     def learn(self, experiences, gamma):
         """Update policy and value parameters using given batch of experience tuples.
@@ -105,18 +102,26 @@ class Agent():
         ======
             experiences (Tuple[torch.Tensor]): tuple of (s, a, r, s', done) tuples 
             gamma (float): discount factor
+            
+            
         """
+        # Sample replay buffer                                       
         states, actions, rewards, next_states, dones = experiences
 
         # ---------------------------- update critic ---------------------------- #
         # Get predicted next-state actions and Q values from target models
         actions_next = self.actor_target(next_states)
-        Q_targets_next = self.critic_target(next_states, actions_next)
+        Q1_targets, Q2_targets = self.critic_target(next_states, actions_next)
+        Q_targets_next = torch.min(Q1_targets, Q2_targets)
+        
         # Compute Q targets for current states (y_i)
         Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
         # Compute critic loss
-        Q_expected = self.critic_local(states, actions)
-        critic_loss = F.mse_loss(Q_expected, Q_targets)
+        
+        
+        
+        Q1_expected, Q2_expected = self.critic_local(states, actions)
+        critic_loss = F.mse_loss(Q1_expected, Q_targets) + F.mse_loss(Q2_expected, Q_targets)
         # Minimize the loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
@@ -127,7 +132,7 @@ class Agent():
         # ---------------------------- update actor ---------------------------- #
         # Compute actor loss
         actions_pred = self.actor_local(states)
-        actor_loss = -self.critic_local(states, actions_pred).mean()
+        actor_loss = -self.critic_local.Q1(states, actions_pred).mean()
         # Minimize the loss
         self.actor_optimizer.zero_grad()
         torch.nn.utils.clip_grad_norm_(self.actor_local.parameters(), 1)
