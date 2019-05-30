@@ -68,17 +68,17 @@
 <h2 id="step-3-explore-the-environment">Train the agents</h2>
 <hr>
 
-Use requirement.txt file to install all libraries requires to the project, open the Notebook <code>Continuous_Control.ipynb</code> which is divided:
+Use requirement.txt file to install all libraries requires to the project, open the Notebook <code>Continuous_Control.ipynb</code> which is organized as follow:
 
 
 1. Start the enviroment
 2. Examine the State and Action Spaces
 3. Take Random Actions in the Environment
 4. Model selected: DDPG - TD3
-5. Training the agents
+5. **Training the agents**
 6. Testing the agents
 7. Future improvement
 
 
-
+Enjoy it. 
 
