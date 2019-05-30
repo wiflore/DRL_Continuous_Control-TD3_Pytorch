@@ -62,22 +62,22 @@
 <p>Then, place the file in the <code>p2_continuous-control/</code> folder in the DRLND GitHub repository, and unzip (or decompress) the file.</p>
 <p>(<em>For Windows users</em>) Check out <a target="_blank" href="https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64">this link</a> if you need help with determining if your computer is running a 32-bit version or 64-bit version of the Windows operating system.</p>
 <p>(<em>For AWS</em>) If you'd like to train the agent on AWS (and have not <a target="_blank" href="https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md">enabled a virtual screen</a>), then please use <a target="_blank" href="https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Linux_NoVis.zip">this link</a> to obtain the "headless" version of the environment.  You will <strong>not</strong> be able to watch the agent without enabling a virtual screen, but you will be able to train the agent.  (<em>To watch the agent, you should follow the instructions to <a target="_blank" href="https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md">enable a virtual screen</a>, and then download the environment for the <strong>Linux</strong> operating system above.</em>)</p>
-<h2 id="step-3-explore-the-environment">Step 3: Explore the Environment</h2>
-<hr>
-<p>After you have followed the instructions above, open <code>Continuous_Control.ipynb</code> (located in the <code>p2_continuous-control/</code> folder in the DRLND GitHub repository) and follow the instructions to learn how to use the Python API to control the agent.</p>
+
 </div></div>
 
-### Train the agents
+<h2 id="step-3-explore-the-environment">Train the agents</h2>
+<hr>
 
-Use requirement.txt file to install all libraries requires to the project, open the Notebook Continous_Control.ipynb which is divided:
+Use requirement.txt file to install all libraries requires to the project, open the Notebook <code>Continuous_Control.ipynb</code> which is divided:
 
--1. Start the enviroment
--2. Examine the State and Action Spaces
--3. Take Random Actions in the Environment
--4. Model selected: DDPG - TD3
--5. Training the agents
--6. Testing the agents
--7. Future improvement
+
+1. Start the enviroment
+2. Examine the State and Action Spaces
+3. Take Random Actions in the Environment
+4. Model selected: DDPG - TD3
+5. Training the agents
+6. Testing the agents
+7. Future improvement
 
 
 
